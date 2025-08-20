@@ -24,4 +24,7 @@ public class Store {
     private Double latitude;
     private Double longitude;
     private String phone;
+
+    @Column(name = "logo_uri", nullable = true)
+    private String logoUri;
 }

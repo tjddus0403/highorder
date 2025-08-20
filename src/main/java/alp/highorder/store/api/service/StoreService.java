@@ -5,6 +5,7 @@ import alp.highorder.store.domain.entity.Store;
 import alp.highorder.store.domain.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -21,18 +22,34 @@ public class StoreService {
                 .latitude(request.latitude())
                 .longitude(request.longitude())
                 .phone(request.phone())
+                .logoUri(request.logoUri())   // ✅ 로고 이미지 추가
                 .build();
 
         Store saved = storeRepository.save(store);
-        return new StoreDto.Response(saved.getId(), saved.getName(), saved.getDescription(),
-                saved.getAddress(), saved.getLatitude(), saved.getLongitude(), saved.getPhone());
+        return new StoreDto.Response(
+                saved.getId(),
+                saved.getName(),
+                saved.getDescription(),
+                saved.getAddress(),
+                saved.getLatitude(),
+                saved.getLongitude(),
+                saved.getPhone(),
+                saved.getLogoUri()
+        );
     }
 
     public List<StoreDto.Response> getAllStores() {
         return storeRepository.findAll().stream()
                 .map(s -> new StoreDto.Response(
-                        s.getId(), s.getName(), s.getDescription(),
-                        s.getAddress(), s.getLatitude(), s.getLongitude(), s.getPhone()))
+                        s.getId(),
+                        s.getName(),
+                        s.getDescription(),
+                        s.getAddress(),
+                        s.getLatitude(),
+                        s.getLongitude(),
+                        s.getPhone(),
+                        s.getLogoUri()
+                ))
                 .toList();
     }
 
@@ -40,7 +57,14 @@ public class StoreService {
         var s = storeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Store not found"));
         return new StoreDto.Response(
-                s.getId(), s.getName(), s.getDescription(),
-                s.getAddress(), s.getLatitude(), s.getLongitude(), s.getPhone());
+                s.getId(),
+                s.getName(),
+                s.getDescription(),
+                s.getAddress(),
+                s.getLatitude(),
+                s.getLongitude(),
+                s.getPhone(),
+                s.getLogoUri()
+        );
     }
 }

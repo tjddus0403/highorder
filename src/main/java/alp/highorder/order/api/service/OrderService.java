@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,6 +33,8 @@ public class OrderService {
         Order order = Order.builder()
                 .customer(customer)
                 .store(store)
+                .totalPrice(0)
+                .items(new ArrayList<>())  // ✅ 반드시 초기화
                 .orderedAt(LocalDateTime.now())
                 .build();
 

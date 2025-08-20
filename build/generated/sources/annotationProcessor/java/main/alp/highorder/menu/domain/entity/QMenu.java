@@ -28,6 +28,8 @@ public class QMenu extends EntityPathBase<Menu> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath imageUri = createString("imageUri");
+
     public final StringPath name = createString("name");
 
     public final NumberPath<Integer> price = createNumber("price", Integer.class);

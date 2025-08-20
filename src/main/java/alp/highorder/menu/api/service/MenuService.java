@@ -26,8 +26,9 @@ public class MenuService {
                 .description(request.description())
                 .price(request.price())
                 .store(store)
-                .avgRating(0.0)      // ✅ 초기값 세팅
-                .reviewCount(0)      // ✅ 초기값 세팅
+                .avgRating(0.0)
+                .reviewCount(0)
+                .imageUri(request.imageUri())   // ✅ 이미지 추가
                 .build();
 
         Menu saved = menuRepository.save(menu);
@@ -37,8 +38,9 @@ public class MenuService {
                 saved.getDescription(),
                 saved.getPrice(),
                 saved.getStore().getId(),
-                saved.getAvgRating(),     // ✅ 추가
-                saved.getReviewCount()    // ✅ 추가
+                saved.getAvgRating(),
+                saved.getReviewCount(),
+                saved.getImageUri()
         );
     }
 
@@ -50,9 +52,26 @@ public class MenuService {
                         m.getDescription(),
                         m.getPrice(),
                         m.getStore().getId(),
-                        m.getAvgRating(),     // ✅ 포함
-                        m.getReviewCount()    // ✅ 포함
+                        m.getAvgRating(),
+                        m.getReviewCount(),
+                        m.getImageUri()
                 ))
                 .toList();
+    }
+
+    public MenuDto.Response getMenu(Long id) {
+        var menu = menuRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Menu not found"));
+
+        return new MenuDto.Response(
+                menu.getId(),
+                menu.getName(),
+                menu.getDescription(),
+                menu.getPrice(),
+                menu.getStore().getId(),
+                menu.getAvgRating(),
+                menu.getReviewCount(),
+                menu.getImageUri()
+        );
     }
 }

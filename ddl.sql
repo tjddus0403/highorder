@@ -5,6 +5,8 @@ DROP TABLE IF EXISTS menus CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS order_items CASCADE;
 DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS stamps CASCADE;
+DROP TABLE IF EXISTS coupons CASCADE;
 
 -- Customers 테이블
 CREATE TABLE customers (
@@ -26,6 +28,7 @@ CREATE TABLE stores (
     latitude DECIMAL(10,8),
     longitude DECIMAL(11,8),
     phone VARCHAR(20),
+    logo_uri VARCHAR(500), -- ✅ 가게 로고 이미지 (nullable, URI)
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
@@ -37,8 +40,9 @@ CREATE TABLE menus (
     description TEXT,
     price INT NOT NULL,
     store_id BIGINT NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
-    avg_rating DECIMAL(3,2) DEFAULT 0,  -- ✅ 평균 평점
-    review_count INT DEFAULT 0,         -- ✅ 리뷰 수
+    image_uri VARCHAR(500), -- ✅ 메뉴 이미지 (nullable, URI)
+    avg_rating DECIMAL(3,2) DEFAULT 0,  -- 평균 평점
+    review_count INT DEFAULT 0,         -- 리뷰 수
     created_at TIMESTAMP NOT NULL DEFAULT now(),
     updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
@@ -74,4 +78,23 @@ CREATE TABLE reviews (
     rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
     comment TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- ✅ Stamps 테이블 생성
+CREATE TABLE stamps (
+    id BIGSERIAL PRIMARY KEY,
+    customer_id BIGINT NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+    store_id BIGINT NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    count INT NOT NULL DEFAULT 0,
+    updated_at TIMESTAMP NOT NULL DEFAULT now(),
+    UNIQUE (customer_id, store_id) -- 한 고객이 한 가게당 스탬프 하나의 row만 갖도록
+);
+
+-- ✅ Coupons 테이블 생성
+CREATE TABLE coupons (
+    id BIGSERIAL PRIMARY KEY,
+    customer_id BIGINT NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+    store_id BIGINT NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
+    used BOOLEAN NOT NULL DEFAULT false,
+    issued_at TIMESTAMP NOT NULL DEFAULT now()
 );

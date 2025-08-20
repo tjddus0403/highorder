@@ -27,6 +27,8 @@ public class QStore extends EntityPathBase<Store> {
 
     public final NumberPath<Double> latitude = createNumber("latitude", Double.class);
 
+    public final StringPath logoUri = createString("logoUri");
+
     public final NumberPath<Double> longitude = createNumber("longitude", Double.class);
 
     public final StringPath name = createString("name");

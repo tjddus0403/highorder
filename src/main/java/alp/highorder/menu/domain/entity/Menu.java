@@ -31,4 +31,7 @@ public class Menu {
 
     private Double avgRating;     // 평균 평점
     private Integer reviewCount;  // 리뷰 개수
+
+    @Column(name = "image_uri", nullable = true)
+    private String imageUri;
 }

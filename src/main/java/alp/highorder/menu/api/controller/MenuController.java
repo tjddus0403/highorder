@@ -12,5 +12,11 @@ import java.util.List;
 @RequestMapping("/api/menus")
 @RequiredArgsConstructor
 public class MenuController {
-
+    private final MenuService menuService;
+    
+    // ✅ 메뉴 ID로 단건 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<MenuDto.Response> getMenu(@PathVariable Long id) {
+        return ResponseEntity.ok(menuService.getMenu(id));
+    }
 }
