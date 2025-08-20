@@ -73,11 +73,11 @@ CREATE TABLE order_items (
 CREATE TABLE reviews (
     id BIGSERIAL PRIMARY KEY,
     customer_id BIGINT NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
-    order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
-    menu_id BIGINT NOT NULL REFERENCES menus(id) ON DELETE CASCADE,
+    order_item_id BIGINT NOT NULL REFERENCES order_items(id) ON DELETE CASCADE,
     rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
     comment TEXT,
-    created_at TIMESTAMP NOT NULL DEFAULT now()
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at DEFAULT now()
 );
 
 -- ✅ Stamps 테이블 생성
@@ -86,7 +86,8 @@ CREATE TABLE stamps (
     customer_id BIGINT NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
     store_id BIGINT NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
     count INT NOT NULL DEFAULT 0,
-    updated_at TIMESTAMP NOT NULL DEFAULT now(),
+    created_at TIMESTAMP NOT NULL DEFAULT now(),
+    updated_at DEFAULT NULL,
     UNIQUE (customer_id, store_id) -- 한 고객이 한 가게당 스탬프 하나의 row만 갖도록
 );
 

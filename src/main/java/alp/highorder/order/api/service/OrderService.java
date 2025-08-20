@@ -6,13 +6,17 @@ import alp.highorder.menu.domain.repository.MenuRepository;
 import alp.highorder.order.api.dto.OrderDto;
 import alp.highorder.order.domain.entity.Order;
 import alp.highorder.order.domain.entity.OrderItem;
+import alp.highorder.order.domain.repository.OrderItemRepository;
 import alp.highorder.order.domain.repository.OrderRepository;
+import alp.highorder.stamp.api.service.StampCouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +26,9 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final StoreRepository storeRepository;
     private final MenuRepository menuRepository;
+    private final StampCouponService stampCouponService; // ✅ 추가
+    private final OrderItemRepository orderItemRepository;
 
-    // ✅ 주문 생성
     public OrderDto.Response createOrder(OrderDto.CreateRequest request) {
         var customer = customerRepository.findById(request.customerId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
@@ -39,6 +44,8 @@ public class OrderService {
                 .build();
 
         int totalPrice = 0;
+        Map<Long, Integer> stampCountMap = new HashMap<>(); // ✅ 가게별 스탬프 수량 누적
+
         for (OrderDto.OrderItemRequest itemReq : request.items()) {
             var menu = menuRepository.findById(itemReq.menuId())
                     .orElseThrow(() -> new RuntimeException("Menu not found"));
@@ -54,10 +61,21 @@ public class OrderService {
                     .build();
 
             order.getItems().add(orderItem);
-        }
-        order.setTotalPrice(totalPrice);
 
+            Long menuStoreId = menu.getStore().getId();
+            // ✅ 메뉴 수량만큼 스탬프 적립
+            stampCountMap.put(menuStoreId,
+                    stampCountMap.getOrDefault(menuStoreId, 0) + itemReq.quantity());
+        }
+
+        order.setTotalPrice(totalPrice);
         Order saved = orderRepository.save(order);
+
+        // ✅ 주문 완료 후 스탬프 적립 실행 (수량만큼 적립)
+        for (Map.Entry<Long, Integer> entry : stampCountMap.entrySet()) {
+            stampCouponService.addStamp(customer.getId(), entry.getKey(), entry.getValue());
+        }
+
         return toResponse(saved);
     }
 
@@ -66,6 +84,18 @@ public class OrderService {
         var order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         return toResponse(order);
+    }
+
+    public OrderDto.OrderItemResponse getOrderItem(Long orderItemId) {
+        var orderItem = orderItemRepository.findById(orderItemId)
+                .orElseThrow(() -> new RuntimeException("OrderItem not found"));
+
+        return new OrderDto.OrderItemResponse(
+                orderItem.getId(),
+                orderItem.getMenu().getId(),
+                orderItem.getQuantity(),
+                orderItem.getPrice()
+        );
     }
 
     // ✅ 고객별 주문 내역 조회
@@ -82,12 +112,11 @@ public class OrderService {
                 .toList();
     }
 
-    // 공통 변환 메서드
     private OrderDto.Response toResponse(Order order) {
         List<OrderDto.OrderItemResponse> items = order.getItems().stream()
                 .map(i -> new OrderDto.OrderItemResponse(
+                        i.getId(),
                         i.getMenu().getId(),
-                        i.getMenu().getName(),
                         i.getQuantity(),
                         i.getPrice()))
                 .toList();
@@ -97,7 +126,8 @@ public class OrderService {
                 order.getCustomer().getId(),
                 order.getStore().getId(),
                 order.getTotalPrice(),
-                items
+                items,
+                order.getOrderedAt()  // ✅ 주문 시각 포함
         );
     }
 }

@@ -40,4 +40,17 @@ public class CustomerController {
     public ResponseEntity<CustomerDto.Response> getCustomer(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.getCustomer(id));
     }
+
+    // ✅ 회원정보 수정 (PUT)
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerDto.Response> updateCustomer(
+            @PathVariable Long id,
+            @RequestBody CustomerDto.UpdateRequest request) {
+        try {
+            CustomerDto.Response response = customerService.updateCustomer(id, request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 }

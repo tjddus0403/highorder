@@ -30,11 +30,11 @@ public class QReview extends EntityPathBase<Review> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final alp.highorder.menu.domain.entity.QMenu menu;
-
-    public final alp.highorder.order.domain.entity.QOrder order;
+    public final alp.highorder.order.domain.entity.QOrderItem orderItem;
 
     public final NumberPath<Integer> rating = createNumber("rating", Integer.class);
+
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
     public QReview(String variable) {
         this(Review.class, forVariable(variable), INITS);
@@ -55,8 +55,7 @@ public class QReview extends EntityPathBase<Review> {
     public QReview(Class<? extends Review> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.customer = inits.isInitialized("customer") ? new alp.highorder.customer.domain.entity.QCustomer(forProperty("customer")) : null;
-        this.menu = inits.isInitialized("menu") ? new alp.highorder.menu.domain.entity.QMenu(forProperty("menu"), inits.get("menu")) : null;
-        this.order = inits.isInitialized("order") ? new alp.highorder.order.domain.entity.QOrder(forProperty("order"), inits.get("order")) : null;
+        this.orderItem = inits.isInitialized("orderItem") ? new alp.highorder.order.domain.entity.QOrderItem(forProperty("orderItem"), inits.get("orderItem")) : null;
     }
 
 }

@@ -5,6 +5,7 @@ import alp.highorder.customer.domain.repository.CustomerRepository;
 import alp.highorder.store.domain.entity.Store;
 import alp.highorder.store.domain.repository.StoreRepository;
 import alp.highorder.stamp.api.dto.CouponDto;
+import alp.highorder.stamp.api.dto.StampDto;
 import alp.highorder.stamp.domain.entity.Coupon;
 import alp.highorder.stamp.domain.entity.Stamp;
 import alp.highorder.stamp.domain.repository.CouponRepository;
@@ -19,69 +20,112 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StampCouponService {
 
-    private final StampRepository stampRepository;
-    private final CouponRepository couponRepository;
     private final CustomerRepository customerRepository;
     private final StoreRepository storeRepository;
+    private final StampRepository stampRepository;
+    private final CouponRepository couponRepository;
 
-    // ✅ 스탬프 적립 + 10개 되면 쿠폰 발급
-    public void addStamp(Long customerId, Long storeId) {
+    // ✅ 스탬프 적립 + 쿠폰 발급
+    public void addStamp(Long customerId, Long storeId, int count) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("고객을 찾을 수 없습니다."));
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(() -> new RuntimeException("가게를 찾을 수 없습니다."));
 
+        // 기존 스탬프 조회 or 신규 생성
         Stamp stamp = stampRepository.findByCustomerIdAndStoreId(customerId, storeId)
-            .orElse(Stamp.builder()
+                .orElse(Stamp.builder()
+                        .customer(customer)
+                        .store(store)
+                        .count(0)
+                        .updatedAt(LocalDateTime.now())
+                        .build()
+                );
+
+        // count 만큼 적립
+        stamp.setCount(stamp.getCount() + count);
+        stamp.setUpdatedAt(LocalDateTime.now());
+
+        // ✅ 10개 이상이면 쿠폰 발급 후 개수 차감
+        while (stamp.getCount() >= 10) {
+            Coupon coupon = Coupon.builder()
                     .customer(customer)
                     .store(store)
-                    .count(0)
-                    .updatedAt(LocalDateTime.now())
-                    .build()
-            );
-
-        stamp.setCount(stamp.getCount() + 1);
-        stamp.setUpdatedAt(LocalDateTime.now());
-        stampRepository.save(stamp);
-
-        // ✅ 10개 이상이면 쿠폰 발급 후 스탬프 초기화
-        if (stamp.getCount() >= 10) {
-            Coupon coupon = Coupon.builder()
-                .customer(customer)
-                .store(store)
-                .used(false)
-                .issuedAt(LocalDateTime.now()) // ✅ 수정
-                .build();
+                    .used(false)
+                    .issuedAt(LocalDateTime.now())
+                    .build();
             couponRepository.save(coupon);
 
-            stamp.setCount(0);
-            stampRepository.save(stamp);
+            stamp.setCount(stamp.getCount() - 10); // 10개 차감
         }
+
+        stampRepository.save(stamp);
     }
 
-    // ✅ 고객 쿠폰 조회 (DTO 변환)
+    // ✅ 고객의 스탬프 조회
+    public List<StampDto.Response> getStamps(Long customerId) {
+        return stampRepository.findByCustomerId(customerId).stream()
+                .map(s -> new StampDto.Response(
+                        s.getId(),
+                        s.getCustomer().getId(),
+                        s.getStore().getId(),
+                        s.getCount(),
+                        s.getUpdatedAt()
+                ))
+                .toList();
+    }
+
+    // ✅ 스탬프 삭제
+    public void deleteStamp(Long stampId) {
+        var stamp = stampRepository.findById(stampId)
+                .orElseThrow(() -> new RuntimeException("Stamp not found"));
+
+        stampRepository.delete(stamp);
+    }
+
+    // ✅ 고객의 쿠폰 조회
     public List<CouponDto.Response> getCoupons(Long customerId) {
         return couponRepository.findByCustomerId(customerId).stream()
                 .map(c -> new CouponDto.Response(
                         c.getId(),
-                        c.getUsed(),
-                        c.getIssuedAt(),
+                        c.getCustomer().getId(),
                         c.getStore().getId(),
-                        c.getStore().getName()   // ✅ storeName 추가
+                        c.isUsed(),
+                        c.getIssuedAt()
                 ))
                 .toList();
+    }
+
+    // ✅ 쿠폰 상태 변경
+    public void changeCouponStatus(Long couponId) {
+        var coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new RuntimeException("Coupon not found"));
+
+        // used = false → true 로 변경
+        if (!coupon.isUsed()) {
+            coupon.setUsed(true);
+            couponRepository.save(coupon);
+        } else {
+            throw new RuntimeException("이미 사용된 쿠폰입니다.");
+        }
     }
 
     // ✅ 쿠폰 사용
     public void useCoupon(Long couponId) {
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new RuntimeException("쿠폰을 찾을 수 없습니다."));
-
-        // ✅ 쿠폰 사용 시
-        if (coupon.getUsed()) {   // isUsed() → getUsed()
+        if (coupon.isUsed()) {
             throw new RuntimeException("이미 사용된 쿠폰입니다.");
         }
         coupon.setUsed(true);
         couponRepository.save(coupon);
+    }
+
+    // ✅ 쿠폰 삭제
+    public void deleteCoupon(Long couponId) {
+        var coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new RuntimeException("Coupon not found"));
+
+        couponRepository.delete(coupon);
     }
 }

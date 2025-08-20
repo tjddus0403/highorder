@@ -8,7 +8,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "coupons", schema = "jpa")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Coupon {
 
     @Id
@@ -23,9 +27,7 @@ public class Coupon {
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    private Boolean used;
+    private boolean used = false; // ✅ 쿠폰 사용 여부
 
-    @Column(name = "issued_at")
-    private LocalDateTime issuedAt;  // ✅ DDL과 일치
+    private LocalDateTime issuedAt;
 }
-

@@ -1,8 +1,7 @@
 package alp.highorder.review.api.service;
 
 import alp.highorder.customer.domain.repository.CustomerRepository;
-import alp.highorder.menu.domain.repository.MenuRepository;
-import alp.highorder.order.domain.repository.OrderRepository;
+import alp.highorder.order.domain.repository.OrderItemRepository;
 import alp.highorder.review.api.dto.ReviewDto;
 import alp.highorder.review.domain.entity.Review;
 import alp.highorder.review.domain.repository.ReviewRepository;
@@ -18,61 +17,86 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final CustomerRepository customerRepository;
-    private final OrderRepository orderRepository;
-    private final MenuRepository menuRepository;
+    private final OrderItemRepository orderItemRepository;
 
     // 리뷰 작성
     public ReviewDto.Response createReview(ReviewDto.CreateRequest request) {
         var customer = customerRepository.findById(request.customerId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
-        var order = orderRepository.findById(request.orderId())
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-        var menu = menuRepository.findById(request.menuId())
-                .orElseThrow(() -> new RuntimeException("Menu not found"));
+        var orderItem = orderItemRepository.findById(request.orderItemId())
+                .orElseThrow(() -> new RuntimeException("OrderItem not found"));
 
         Review review = Review.builder()
                 .customer(customer)
-                .order(order)
-                .menu(menu)
+                .orderItem(orderItem)
                 .rating(request.rating())
                 .comment(request.comment())
                 .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         Review saved = reviewRepository.save(review);
 
-        // ✅ 리뷰 저장 직후 메뉴의 avgRating, reviewCount 갱신
-        List<Review> reviews = reviewRepository.findByMenuId(menu.getId());
-        double avg = reviews.stream()
-                .mapToInt(Review::getRating)
-                .average()
-                .orElse(0);
-        menu.setAvgRating(Math.round(avg * 100.0) / 100.0); // 소수점 2자리
-        menu.setReviewCount(reviews.size());
-        menuRepository.save(menu);
-
         return new ReviewDto.Response(
-                saved.getId(), saved.getCustomer().getId(), saved.getOrder().getId(),
-                saved.getMenu().getId(), saved.getRating(), saved.getComment(), saved.getCreatedAt()
+                saved.getId(),
+                saved.getCustomer().getId(),
+                saved.getOrderItem().getId(),
+                saved.getRating(),
+                saved.getComment(),
+                saved.getCreatedAt(),
+                saved.getUpdatedAt()
         );
     }
 
-
     // 특정 메뉴 리뷰 조회
     public List<ReviewDto.Response> getReviewsByMenu(Long menuId) {
-        return reviewRepository.findByMenuId(menuId).stream()
-                .map(r -> new ReviewDto.Response(r.getId(), r.getCustomer().getId(),
-                        r.getOrder().getId(), r.getMenu().getId(),
-                        r.getRating(), r.getComment(), r.getCreatedAt()))
+        return reviewRepository.findByOrderItemMenuId(menuId).stream()
+                .map(r -> new ReviewDto.Response(
+                        r.getId(),
+                        r.getCustomer().getId(),
+                        r.getOrderItem().getId(),
+                        r.getRating(),
+                        r.getComment(),
+                        r.getCreatedAt(),
+                        r.getUpdatedAt()
+                ))
                 .toList();
     }
 
     // 고객별 리뷰 조회
     public List<ReviewDto.Response> getReviewsByCustomer(Long customerId) {
         return reviewRepository.findByCustomerId(customerId).stream()
-                .map(r -> new ReviewDto.Response(r.getId(), r.getCustomer().getId(),
-                        r.getOrder().getId(), r.getMenu().getId(),
-                        r.getRating(), r.getComment(), r.getCreatedAt()))
+                .map(r -> new ReviewDto.Response(
+                        r.getId(),
+                        r.getCustomer().getId(),
+                        r.getOrderItem().getId(),
+                        r.getRating(),
+                        r.getComment(),
+                        r.getCreatedAt(),
+                        r.getUpdatedAt()
+                ))
                 .toList();
+    }
+
+    // 리뷰 수정
+    public ReviewDto.Response updateReview(Long reviewId, ReviewDto.UpdateRequest request) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        review.setRating(request.rating());
+        review.setComment(request.comment());
+        review.setUpdatedAt(LocalDateTime.now());
+
+        Review updated = reviewRepository.save(review);
+
+        return new ReviewDto.Response(
+                updated.getId(),
+                updated.getCustomer().getId(),
+                updated.getOrderItem().getId(),
+                updated.getRating(),
+                updated.getComment(),
+                updated.getCreatedAt(),
+                updated.getUpdatedAt()
+        );
     }
 }

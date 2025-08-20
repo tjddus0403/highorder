@@ -35,4 +35,26 @@ public class CustomerService {
                 customer.getNickname()
         );
     }
+
+    public CustomerDto.Response updateCustomer(Long id, CustomerDto.UpdateRequest request) {
+        var customer = customerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        // 이름은 변경 불가 → password, nickname만 수정
+        if (request.password() != null) {
+            customer.setPassword(request.password());
+        }
+        if (request.nickname() != null) {
+            customer.setNickname(request.nickname());
+        }
+
+        var updated = customerRepository.save(customer);
+
+        return new CustomerDto.Response(
+                updated.getId(),
+                updated.getName(),
+                updated.getEmail(),
+                updated.getNickname()
+        );
+    }
 }
