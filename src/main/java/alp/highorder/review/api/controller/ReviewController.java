@@ -32,4 +32,20 @@ public class ReviewController {
     public ResponseEntity<List<ReviewDto.Response>> getReviewsByCustomer(@PathVariable Long customerId) {
         return ResponseEntity.ok(reviewService.getReviewsByCustomer(customerId));
     }
+
+    // ✅ 리뷰 수정
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<ReviewDto.Response> updateReview(
+            @PathVariable Long reviewId,
+            @RequestBody ReviewDto.UpdateRequest request
+    ) {
+        return ResponseEntity.ok(reviewService.updateReview(reviewId, request));
+    }
+
+    // ✅ 리뷰 삭제
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
+        reviewService.deleteReview(reviewId);
+        return ResponseEntity.noContent().build();
+    }
 }

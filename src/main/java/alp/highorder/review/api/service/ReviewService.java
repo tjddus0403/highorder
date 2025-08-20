@@ -7,6 +7,7 @@ import alp.highorder.review.domain.entity.Review;
 import alp.highorder.review.domain.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -79,6 +80,7 @@ public class ReviewService {
     }
 
     // 리뷰 수정
+    @Transactional
     public ReviewDto.Response updateReview(Long reviewId, ReviewDto.UpdateRequest request) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
@@ -98,5 +100,14 @@ public class ReviewService {
                 updated.getCreatedAt(),
                 updated.getUpdatedAt()
         );
+    }
+
+    // 리뷰 삭제
+    @Transactional
+    public Long deleteReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+        reviewRepository.delete(review);
+        return reviewId;
     }
 }
