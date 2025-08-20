@@ -200,29 +200,12 @@ logging:
 - `ReviewController`: 리뷰 관련 API
 - `StampCouponController`: 스탬프/쿠폰 관련 API
 
-## 🧪 테스트
-
-```bash
-# 테스트 실행
-./gradlew test
-
-# 테스트 커버리지 확인
-./gradlew jacocoTestReport
-```
 
 ## 📁 이미지 파일 관리
 
 - **메뉴 이미지**: `src/main/resources/static/images/menus/`
 - **가게 로고**: `src/main/resources/static/images/stores/`
 - 이미지 파일은 URI 경로로 데이터베이스에 저장
-
-## 🤝 기여 방법
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
 
 ## 📄 라이선스
 
