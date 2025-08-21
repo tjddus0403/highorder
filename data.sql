@@ -1,8 +1,8 @@
 -- Customers 초기 데이터
 INSERT INTO customers (name, email, password, nickname)
 VALUES 
-  ('홍길동', 'hong@test.com', '1234', '길동이'),
-  ('김영희', 'kim@test.com', 'abcd', '영희짱');
+  ('김성연', 'sykim@test.com', 'tjddusdldi', '성연'),
+  ('홍길동', 'hong@test.com', '1234!!!', '길동씨');
 
 -- Stores 초기 데이터 (logo_uri 추가)
 INSERT INTO stores (name, description, address, latitude, longitude, phone, logo_uri)
@@ -30,14 +30,6 @@ VALUES
   ('족발 소', '소 사이즈 족발', 25000, 2),
   ('족발 대', '대 사이즈 족발', 35000, 2);
 
--- 주문 (홍길동이 이가네양꼬치에서 주문)
-INSERT INTO orders (customer_id, store_id, total_price)
-VALUES (1, 1, 44000);
-
--- 주문 상세 (김밥 1개, 라면 1개)
-INSERT INTO order_items (order_id, menu_id, quantity, price)
-VALUES (1, 1, 1, 23000), (1, 6, 1, 21000);
-
 -- ✅ 주문 (홍길동이 이가네양꼬치에서 주문, 김영희가 족발의달인에서 주문)
 INSERT INTO orders (customer_id, store_id, total_price, ordered_at)
 VALUES 
@@ -49,7 +41,7 @@ INSERT INTO order_items (order_id, menu_id, quantity, price)
 VALUES 
   (1, 1, 1, 23000),  -- 홍길동: 양등심꼬치 1개
   (1, 2, 1, 26000),  -- 홍길동: 양왕갈비 1개
-  (1, 6, 1, 18000),  -- 홍길동: 양왕꼬치 1개
+  (1, 6, 1, 21000),  -- 홍길동: 탕수 1개
 
   (2, 8, 1, 25000),  -- 김영희: 족발 소 1개
   (2, 9, 1, 35000);  -- 김영희: 족발 대 1개
@@ -59,7 +51,7 @@ INSERT INTO reviews (customer_id, order_item_id, rating, comment, created_at)
 VALUES 
   (1, 1, 5, '양등심꼬치 정말 맛있어요!', now()),
   (1, 2, 4, '양왕갈비는 조금 질겼지만 맛있음', now()),
-  (1, 3, 5, '양왕꼬치 최고!', now()),
+  (1, 3, 5, '탕수육 최고!', now()),
 
   (2, 4, 5, '족발 소 사이즈, 부드럽고 맛있습니다.', now()),
   (2, 5, 4, '족발 대 사이즈는 괜찮았지만 조금 짰음', now());
@@ -71,9 +63,9 @@ VALUES (1, 1, 0, now());
 INSERT INTO coupons (customer_id, store_id, used, issued_at)
 VALUES (1, 1, false, now());
 
--- 예시: 홍길동이 족발의달인에서 스탬프 12개 채워 쿠폰 발급
+-- 예시: 홍길동이 족발의달인에서 스탬프 2개만 모은 상태
 INSERT INTO stamps (customer_id, store_id, count, updated_at)
-VALUES (1, 2, 12, now());
+VALUES (1, 2, 2, now());
 
 -- 예시: 김영희는 족발의달인에서 스탬프 5개만 모은 상태
 INSERT INTO stamps (customer_id, store_id, count, updated_at)
