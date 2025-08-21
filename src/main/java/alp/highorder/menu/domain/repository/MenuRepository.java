@@ -1,10 +1,12 @@
 package alp.highorder.menu.domain.repository;
 
 import alp.highorder.menu.domain.entity.Menu;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface MenuRepository extends JpaRepository<Menu, Long> {
+public interface MenuRepository {
     List<Menu> findByStoreId(Long storeId);
+    Optional<Menu> findById(Long id);
+    Menu save(Menu menu);
 }
