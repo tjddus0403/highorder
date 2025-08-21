@@ -7,7 +7,7 @@ VALUES
 -- Stores 초기 데이터 (logo_uri 추가)
 INSERT INTO stores (name, description, address, latitude, longitude, phone, logo_uri)
 VALUES
-  ('이가네양꼬치', '양꼬치&고량주 전문점', '경기도 성남시 분당구 분당내곡로 155', 37.5010, 127.0396, '031-8017-9688', '/images/stores/store1.jpg');
+  ('이가네양꼬치', '양꼬치&고량주 전문점', '경기도 성남시 분당구 분당내곡로 155', 37.3976, 127.1124, '031-8017-9688', '/images/stores/store1.jpg');
 
 INSERT INTO stores (name, description, address, latitude, longitude, phone)
 VALUES
@@ -54,15 +54,15 @@ VALUES
   (2, 8, 1, 25000),  -- 김영희: 족발 소 1개
   (2, 9, 1, 35000);  -- 김영희: 족발 대 1개
 
--- ✅ 리뷰 데이터
-INSERT INTO reviews (customer_id, order_id, menu_id, rating, comment, created_at)
+-- ✅ 수정된 리뷰 데이터 삽입 (order_item_id 기준)
+INSERT INTO reviews (customer_id, order_item_id, rating, comment, created_at)
 VALUES 
-  (1, 1, 1, 5, '양등심꼬치 정말 맛있어요!', now()),
-  (1, 1, 2, 4, '양왕갈비는 조금 질겼지만 맛있음', now()),
-  (1, 1, 6, 5, '양왕꼬치 최고!', now()),
+  (1, 1, 5, '양등심꼬치 정말 맛있어요!', now()),
+  (1, 2, 4, '양왕갈비는 조금 질겼지만 맛있음', now()),
+  (1, 3, 5, '양왕꼬치 최고!', now()),
 
-  (2, 2, 8, 5, '족발 소 사이즈, 부드럽고 맛있습니다.', now()),
-  (2, 2, 9, 4, '족발 대 사이즈는 괜찮았지만 조금 짰음', now());
+  (2, 4, 5, '족발 소 사이즈, 부드럽고 맛있습니다.', now()),
+  (2, 5, 4, '족발 대 사이즈는 괜찮았지만 조금 짰음', now());
 
 -- 예시: 홍길동이 이가네양꼬치에서 스탬프 10개 채워 쿠폰 발급
 INSERT INTO stamps (customer_id, store_id, count, updated_at)
@@ -70,6 +70,10 @@ VALUES (1, 1, 0, now());
 
 INSERT INTO coupons (customer_id, store_id, used, issued_at)
 VALUES (1, 1, false, now());
+
+-- 예시: 홍길동이 족발의달인에서 스탬프 12개 채워 쿠폰 발급
+INSERT INTO stamps (customer_id, store_id, count, updated_at)
+VALUES (1, 2, 12, now());
 
 -- 예시: 김영희는 족발의달인에서 스탬프 5개만 모은 상태
 INSERT INTO stamps (customer_id, store_id, count, updated_at)

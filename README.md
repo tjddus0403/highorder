@@ -1,10 +1,8 @@
-# 🍽️ 하이오더 (HighOrder) 포 커스토머
-
-**더 나은 음식 경험을 위한 선택**
+# Highorder - 고객 주문 관리 시스템
 
 ## 📋 프로젝트 개요
 
-하이오더 포 커스토머는 고객의 주문, 리뷰, 스탬프 적립 및 쿠폰 발급을 관리하는 Spring Boot 기반의 웹 애플리케이션입니다.
+Highorder는 고객의 주문, 리뷰, 스탬프 적립 및 쿠폰 발급을 관리하는 Spring Boot 기반의 웹 애플리케이션입니다.
 
 ## 🏗️ 프로젝트 구조
 
@@ -202,12 +200,29 @@ logging:
 - `ReviewController`: 리뷰 관련 API
 - `StampCouponController`: 스탬프/쿠폰 관련 API
 
+## 🧪 테스트
+
+```bash
+# 테스트 실행
+./gradlew test
+
+# 테스트 커버리지 확인
+./gradlew jacocoTestReport
+```
 
 ## 📁 이미지 파일 관리
 
 - **메뉴 이미지**: `src/main/resources/static/images/menus/`
 - **가게 로고**: `src/main/resources/static/images/stores/`
 - 이미지 파일은 URI 경로로 데이터베이스에 저장
+
+## 🤝 기여 방법
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## 📄 라이선스
 

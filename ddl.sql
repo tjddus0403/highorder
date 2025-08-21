@@ -77,7 +77,7 @@ CREATE TABLE reviews (
     rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
     comment TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
-    updated_at DEFAULT now()
+    updated_at TIMESTAMP DEFAULT now()
 );
 
 -- ✅ Stamps 테이블 생성
@@ -87,7 +87,7 @@ CREATE TABLE stamps (
     store_id BIGINT NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
     count INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT now(),
-    updated_at DEFAULT NULL,
+    updated_at TIMESTAMP DEFAULT NULL,
     UNIQUE (customer_id, store_id) -- 한 고객이 한 가게당 스탬프 하나의 row만 갖도록
 );
 
