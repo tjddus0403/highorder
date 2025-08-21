@@ -38,6 +38,8 @@ highorder/
 ```
 
 ## 🗄️ 데이터베이스 구조 (ERD)
+<img width="890" height="648" alt="ERD_김성연" src="https://github.com/user-attachments/assets/c50055ba-51f4-4561-b640-2c8ebcf1643a" />
+
 
 ## 🚀 실행 방법
 
@@ -47,7 +49,6 @@ highorder/
 - PostgreSQL 12 이상 또는 H2 Database
 
 ### 2. 데이터베이스 설정
-#### PostgreSQL 사용 시
 ```bash
 # PostgreSQL 설치 및 실행
 # 데이터베이스 생성
@@ -59,17 +60,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/pg_sample
     username: postgres
     password: postgres
-```
-
-#### H2 Database 사용 시 (개발용)
-```bash
-# application.yml에서 H2 설정 활성화
-spring:
-  datasource:
-    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
 ```
 
 ### 3. 애플리케이션 실행
