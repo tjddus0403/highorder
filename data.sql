@@ -46,6 +46,14 @@ VALUES
   (2, 8, 1, 25000),  -- 김영희: 족발 소 1개
   (2, 9, 1, 35000);  -- 김영희: 족발 대 1개
 
+INSERT INTO orders (customer_id, store_id, total_price, ordered_at)
+VALUES
+  (1, 2, 25000, now());
+
+INSERT INTO order_items (order_id, menu_id, quantity, price)
+VALUES
+  (3, 8, 1, 25000);
+
 -- ✅ 수정된 리뷰 데이터 삽입 (order_item_id 기준)
 INSERT INTO reviews (customer_id, order_item_id, rating, comment, created_at)
 VALUES 
