@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16
+    container_name: pg-kt
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pg_sample
+      POSTGRES_INITDB_ARGS: "--schema=jpa"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-schema.sql:/docker-entrypoint-initdb.d/01-init-schema.sql
+      - ./ddl.sql:/docker-entrypoint-initdb.d/02-ddl.sql
+      - ./data.sql:/docker-entrypoint-initdb.d/03-data.sql
+    restart: unless-stopped
+
+volumes:
+  pgdata:
