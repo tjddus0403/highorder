@@ -37,69 +37,7 @@ highorder/
 └── build.gradle                      # Gradle 빌드 설정
 ```
 
-## 🗄️ 데이터베이스 구조
-
-### 1. Customers (고객)
-- **id**: 고객 고유 식별자 (BIGSERIAL)
-- **name**: 고객 이름 (VARCHAR(100)) - 주문 시 배송 정보로 활용
-- **email**: 이메일 주소 (VARCHAR(255), UNIQUE) - 로그인 및 알림 발송용
-- **password**: 비밀번호 (VARCHAR(255)) - 보안을 위해 암호화 저장
-- **nickname**: 닉네임 (VARCHAR(50), UNIQUE) - 커뮤니티 활동 시 사용
-- **created_at/updated_at**: 생성/수정 시간 - 감사 추적 및 데이터 관리
-
-### 2. Stores (가게)
-- **id**: 가게 고유 식별자 (BIGSERIAL)
-- **name**: 가게명 (VARCHAR(200)) - 검색 및 표시용
-- **description**: 가게 설명 (TEXT) - 상세 정보 제공
-- **address**: 주소 (VARCHAR(500)) - 배송 및 위치 정보
-- **latitude/longitude**: 위도/경도 (DECIMAL) - 지도 표시 및 거리 계산
-- **phone**: 전화번호 (VARCHAR(20)) - 연락처 정보
-- **logo_uri**: 로고 이미지 경로 (VARCHAR(500)) - 브랜딩 및 UI 표시
-
-### 3. Menus (메뉴)
-- **id**: 메뉴 고유 식별자 (BIGSERIAL)
-- **name**: 메뉴명 (VARCHAR(200)) - 주문 시 선택용
-- **description**: 메뉴 설명 (TEXT) - 상세 정보 제공
-- **price**: 가격 (INT) - 주문 금액 계산용
-- **store_id**: 가게 ID (BIGINT, FK) - 메뉴 소속 가게
-- **image_uri**: 메뉴 이미지 경로 (VARCHAR(500)) - 시각적 선택 도움
-- **avg_rating**: 평균 평점 (DECIMAL(3,2)) - 고객 선택 기준
-- **review_count**: 리뷰 수 (INT) - 인기도 지표
-
-### 4. Orders (주문)
-- **id**: 주문 고유 식별자 (BIGSERIAL)
-- **customer_id**: 고객 ID (BIGINT, FK) - 주문자 정보
-- **store_id**: 가게 ID (BIGINT, FK) - 주문 대상 가게
-- **total_price**: 총 주문 금액 (INT) - 결제 금액
-- **ordered_at**: 주문 시간 (TIMESTAMP) - 주문 이력 관리
-
-### 5. OrderItems (주문 상세)
-- **id**: 주문 상세 고유 식별자 (BIGSERIAL)
-- **order_id**: 주문 ID (BIGINT, FK) - 상위 주문과 연결
-- **menu_id**: 메뉴 ID (BIGINT, FK) - 주문된 메뉴
-- **quantity**: 수량 (INT) - 주문 수량
-- **price**: 가격 (INT) - 메뉴 단가 × 수량
-
-### 6. Reviews (리뷰)
-- **id**: 리뷰 고유 식별자 (BIGSERIAL)
-- **customer_id**: 고객 ID (BIGINT, FK) - 리뷰 작성자
-- **order_item_id**: 주문 상세 ID (BIGINT, FK) - 리뷰 대상 주문
-- **rating**: 평점 (INT, 1-5) - 메뉴 품질 평가
-- **comment**: 리뷰 내용 (TEXT) - 상세 의견
-
-### 7. Stamps (스탬프)
-- **id**: 스탬프 고유 식별자 (BIGSERIAL)
-- **customer_id**: 고객 ID (BIGINT, FK) - 스탬프 소유자
-- **store_id**: 가게 ID (BIGINT, FK) - 스탬프 적립 가게
-- **count**: 스탬프 개수 (INT) - 적립 현황
-- **UNIQUE(customer_id, store_id)**: 고객당 가게별 하나의 스탬프 카드만 보유
-
-### 8. Coupons (쿠폰)
-- **id**: 쿠폰 고유 식별자 (BIGSERIAL)
-- **customer_id**: 고객 ID (BIGINT, FK) - 쿠폰 소유자
-- **store_id**: 가게 ID (BIGINT, FK) - 쿠폰 사용 가능 가게
-- **used**: 사용 여부 (BOOLEAN) - 쿠폰 상태 관리
-- **issued_at**: 발급 시간 (TIMESTAMP) - 유효기간 관리
+## 🗄️ 데이터베이스 구조 (ERD)
 
 ## 🚀 실행 방법
 
@@ -215,15 +153,3 @@ logging:
 - **메뉴 이미지**: `src/main/resources/static/images/menus/`
 - **가게 로고**: `src/main/resources/static/images/stores/`
 - 이미지 파일은 URI 경로로 데이터베이스에 저장
-
-## 🤝 기여 방법
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## 📄 라이선스
-
-이 프로젝트는 MIT 라이선스 하에 배포됩니다.
